@@ -28,3 +28,75 @@ function saveRecord(record) {
     const transactionObjectStore = transaction.objectStore('new_transaction');
     transactionObjectStore.add(record);
 };
+
+function uploadTransaction() {
+    const transaction = db.transaction(['new_transaction'], 'readwrite');
+    const transactionObjectStore = transaction.objectStore('new_transaction');
+    const getAll = transactionObjectStore.getAll();
+
+    // upon successful getAll execution
+    getAll.onsuccess = function() {
+        // if there was data in indexedDb's store, send to server
+        // if there's more than 1 item in store, send to bulk create endpoint
+        if (getAll.result.length > 1) {
+            fetch('/api/transaction/bulk', {
+                method: 'POST',
+                body: JSON.stringify(getAll.result),
+                headers: {
+                    Accept: 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(serverResponse => {
+                if (serverResponse.message) {
+                    throw new Error(serverResponse);
+                }
+
+                // open one more transaction
+                const transaction = db.transaction(['new_transaction'], 'readwrite');
+                // access object store
+                const transactionObjectStore = transaction.objectStore('new_transaction');
+                // clear object store
+                transactionObjectStore.clear();
+
+                alert('All saved transactions have been submitted!');
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
+        // if only one item in store
+        // } else if (getAll.result.length === 1) {
+        //         fetch('/api/transaction', {
+        //             method: 'POST',
+        //             body: JSON.stringify(getAll.result),
+        //             headers: {
+        //                 Accept: 'application/json, text/plain, */*',
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         })
+        //         .then(response => response.json())
+        //         .then(serverResponse => {
+        //             if (serverResponse.message) {
+        //                 throw new Error(serverResponse);
+        //             }
+    
+        //             // open one more transaction
+        //             const transaction = db.transaction(['new_transaction'], 'readwrite');
+        //             // access object store
+        //             const transactionObjectStore = transaction.objectStore('new_transaction');
+        //             // clear object store
+        //             transactionObjectStore.clear();
+    
+        //             alert('All saved transactions have been submitted!');
+        //         })
+        //         .catch(err => {
+        //             console.log(err);
+        //         });
+        }
+    }
+};
+
+// listen for app coming back online
+window.addEventListener('online', uploadTransaction);
