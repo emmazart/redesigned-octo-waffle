@@ -13,6 +13,9 @@ fetch("/api/transaction")
     populateTable();
     populateChart();
   });
+  // .catch(err => {
+  //   console.log('Fetch Error', err);
+  // });
 
 function populateTotal() {
   // reduce transaction amounts to a single total value
