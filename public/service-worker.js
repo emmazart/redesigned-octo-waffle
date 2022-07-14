@@ -1,14 +1,43 @@
 const APP_PREFIX = 'BudgetTracker-';
-const VERSION = 'version_01';
+const VERSION = 'version_03';
 const CACHE_NAME = APP_PREFIX + VERSION;
 
-const FILES_TO_CACHE = [
+const cacheAssets = [
     "/",
-    "./index.html",
-    "./css/style.css",
-    "./js/index.js",
-    "./js/idb.js"
+    "index.html",
+    "/css/styles.css",
+    "/js/index.js",
+    "/js/idb.js"
 ];
+
+// cache resources
+self.addEventListener('install', e => {
+    console.log('Service Worker: Installed');
+
+    e.waitUntil(
+        caches
+            .open(CACHE_NAME)
+            .then(cache => {
+                console.log('Service Worker: Caching Files');
+                return cache.addAll(cacheAssets);
+            })
+            .then(() => self.skipWaiting())
+    )
+
+    // e.waitUntil(
+    //     caches.open(CACHE_NAME).then(cache => {
+    //       console.log('installing cache : ' + CACHE_NAME);
+    //       console.log(cache);
+    //       return (cache.addAll(FILES_TO_CACHE));
+    //     }));
+
+    //     self.skipWaiting();
+});
+
+// call activate event
+self.addEventListener('activate', e => {
+    console.log('Service Worker: Activated');
+});
 
 // respond with cached resources
 self.addEventListener('fetch', function(e) {
@@ -30,37 +59,27 @@ self.addEventListener('fetch', function(e) {
     )
 });
 
-// cache resources
-self.addEventListener('install', function(e) {
-    e.waitUntil(
-        caches.open(CACHE_NAME).then(cache => {
-          console.log('installing cache : ' + CACHE_NAME);
-          console.log(cache);
-          return (cache.addAll(FILES_TO_CACHE));
-        }))
-        self.skipWaiting();
-});
 
-// Delete outdated caches
-self.addEventListener('activate', function(e) {
-    e.waitUntil(
-      caches.keys().then(function(keyList) {
-        // `keyList` contains all cache names under your username.github.io
-        // filter out ones that has this app prefix to create keeplist
-        let cacheKeeplist = keyList.filter(function(key) {
-          return key.indexOf(APP_PREFIX);
-        });
-        // add current cache name to keeplist
-        cacheKeeplist.push(CACHE_NAME);
+// // Delete outdated caches
+// self.addEventListener('activate', function(e) {
+//     e.waitUntil(
+//       caches.keys().then(function(keyList) {
+//         // `keyList` contains all cache names under your username.github.io
+//         // filter out ones that has this app prefix to create keeplist
+//         let cacheKeeplist = keyList.filter(function(key) {
+//           return key.indexOf(APP_PREFIX);
+//         });
+//         // add current cache name to keeplist
+//         cacheKeeplist.push(CACHE_NAME);
   
-        return Promise.all(
-          keyList.map(function(key, i) {
-            if (cacheKeeplist.indexOf(key) === -1) {
-              console.log('deleting cache : ' + keyList[i]);
-              return caches.delete(keyList[i]);
-            }
-          })
-        );
-      })
-    );
-  });
+//         return Promise.all(
+//           keyList.map(function(key, i) {
+//             if (cacheKeeplist.indexOf(key) === -1) {
+//               console.log('deleting cache : ' + keyList[i]);
+//               return caches.delete(keyList[i]);
+//             }
+//           })
+//         );
+//       })
+//     );
+// });
