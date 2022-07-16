@@ -44,3 +44,12 @@ Web Manifest: `/public/manifest.json` holds the appâ€™s metadata, to let usersâ€
 ## Deployed Application
 
 Link to live deployment on heroku: [Heroku App](https://warm-scrubland-56362.herokuapp.com/)
+
+Github repo: [Link](https://github.com/emmazart/redesigned-octo-waffle)
+
+Screenshot of deployed application:
+[!Screenshot of deployed app on heroku](/public/assets/heroku-deployment.png)
+
+Screenshot of installed application:
+[!Screenshot of installed app on computer](/public/assets/desktop-screenshot.png)
+
