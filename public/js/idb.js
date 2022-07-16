@@ -29,6 +29,7 @@ function saveRecord(record) {
     const transaction = db.transaction(['new_transaction'], 'readwrite');
     const transactionObjectStore = transaction.objectStore('new_transaction');
     transactionObjectStore.add(record);
+    alert('Transaction submitted');
 };
 
 // function to execute when app is back online and idb data needs to be 
