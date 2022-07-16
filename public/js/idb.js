@@ -14,6 +14,7 @@ request.onsuccess = function(event) {
     if (navigator.onLine) {
         // if app is online, write function to send all local db data to api
         console.log('app online');
+        uploadTransaction();
     };
 };
 
@@ -23,12 +24,15 @@ request.onerror = function(event) {
 };
 
 // function will execute if user attempts to save new data and there is no connection
+// executed in index.js line 144 in the catch for the fetch
 function saveRecord(record) {
     const transaction = db.transaction(['new_transaction'], 'readwrite');
     const transactionObjectStore = transaction.objectStore('new_transaction');
     transactionObjectStore.add(record);
 };
 
+// function to execute when app is back online and idb data needs to be 
+// sent to the server
 function uploadTransaction() {
     const transaction = db.transaction(['new_transaction'], 'readwrite');
     const transactionObjectStore = transaction.objectStore('new_transaction');
@@ -38,7 +42,8 @@ function uploadTransaction() {
     getAll.onsuccess = function() {
         // if there was data in indexedDb's store, send to server
         // if there's more than 1 item in store, send to bulk create endpoint
-        if (getAll.result.length > 1) {
+        if (getAll.result.length > 0) {
+            console.log('multiple transactions')
             fetch('/api/transaction/bulk', {
                 method: 'POST',
                 body: JSON.stringify(getAll.result),
@@ -65,35 +70,6 @@ function uploadTransaction() {
             .catch(err => {
                 console.log(err);
             });
-
-        // if only one item in store
-        // } else if (getAll.result.length === 1) {
-        //         fetch('/api/transaction', {
-        //             method: 'POST',
-        //             body: JSON.stringify(getAll.result),
-        //             headers: {
-        //                 Accept: 'application/json, text/plain, */*',
-        //                 'Content-Type': 'application/json'
-        //             }
-        //         })
-        //         .then(response => response.json())
-        //         .then(serverResponse => {
-        //             if (serverResponse.message) {
-        //                 throw new Error(serverResponse);
-        //             }
-    
-        //             // open one more transaction
-        //             const transaction = db.transaction(['new_transaction'], 'readwrite');
-        //             // access object store
-        //             const transactionObjectStore = transaction.objectStore('new_transaction');
-        //             // clear object store
-        //             transactionObjectStore.clear();
-    
-        //             alert('All saved transactions have been submitted!');
-        //         })
-        //         .catch(err => {
-        //             console.log(err);
-        //         });
         }
     }
 };

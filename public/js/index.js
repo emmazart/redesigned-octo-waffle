@@ -1,6 +1,7 @@
 let transactions = [];
 let myChart;
 
+// fetch request runs on page load?
 fetch("/api/transaction")
   .then(response => {
     return response.json();
@@ -13,10 +14,8 @@ fetch("/api/transaction")
     populateTable();
     populateChart();
   });
-  // .catch(err => {
-  //   console.log('Fetch Error', err);
-  // });
 
+// calculates current budget total
 function populateTotal() {
   // reduce transaction amounts to a single total value
   let total = transactions.reduce((total, t) => {
@@ -25,8 +24,9 @@ function populateTotal() {
 
   let totalEl = document.querySelector("#total");
   totalEl.textContent = total;
-}
+};
 
+// populates Table with transaction data
 function populateTable() {
   let tbody = document.querySelector("#tbody");
   tbody.innerHTML = "";
@@ -41,8 +41,9 @@ function populateTable() {
 
     tbody.appendChild(tr);
   });
-}
+};
 
+// populates chart with transaction data
 function populateChart() {
   // copy array and reverse it
   let reversed = transactions.slice().reverse();
@@ -81,6 +82,7 @@ function populateChart() {
   });
 }
 
+// sendTransaction takes in a boolean value for isAdding to determine if transaction is pos or neg value
 function sendTransaction(isAdding) {
   let nameEl = document.querySelector("#t-name");
   let amountEl = document.querySelector("#t-amount");

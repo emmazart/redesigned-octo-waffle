@@ -1,5 +1,5 @@
 const APP_PREFIX = 'BudgetTracker-';
-const VERSION = 'version_03';
+const VERSION = 'version_01';
 const CACHE_NAME = APP_PREFIX + VERSION;
 
 const cacheAssets = [
@@ -62,8 +62,11 @@ self.addEventListener('activate', e => {
 //     )
 // });
 
+// something is wrong here
+// the console.log is not appearing and we are hitting the else statement every time even though
+// there are files stored in the cache
 self.addEventListener('fetch', e => {
-    console.log('Service Worker Fetching : ' + e.request.url)
+    console.log('Service Worker Fetching : ' + e.request.url);
     
     e.respondWith(
         caches.match(e.request).then(function (request) {
