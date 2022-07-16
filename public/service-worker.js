@@ -54,18 +54,6 @@ self.addEventListener('activate', e => {
     )
 });
 
-// respond with cached resources
-// self.addEventListener('fetch', e => {
-//     console.log('Service Worker Fetching : ' + e.request.url);
-
-//     e.respondWith(
-//         fetch(e.request).catch(() => caches.match(e.request))
-//     )
-// });
-
-// something is wrong here
-// the console.log is not appearing and we are hitting the else statement every time even though
-// there are files stored in the cache
 self.addEventListener('fetch', e => {
     console.log('Service Worker Fetching : ' + e.request.url);
     
@@ -84,6 +72,7 @@ self.addEventListener('fetch', e => {
         })
     )
 
+    // another way of writing this
     // if (e.request.url.includes("/api/")) {
     //     console.log()
     //     e.respondWith(
